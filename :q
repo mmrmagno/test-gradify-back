@@ -1,0 +1,29 @@
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
+from dotenv import load_dotenv
+from .keycloak import get_token
+import uvicorn
+
+# Load environment variables
+load_dotenv()
+
+# Create FastAPI instance
+app = FastAPI()
+
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    # Attempt to get a token from Keycloak
+    try:
+        token_response = get_token(form_data.username, form_data.password)
+
+        # Check for error in token response
+        if "error" in token_response:
+            raise HTTPException(status_code=400, detail=token_response.get("error_description", "Token request failed"))
+
+        # Return the token response
+        return token_response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

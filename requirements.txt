@@ -1,0 +1,11 @@
+fastapi
+keycloak
+keycloak-client
+sqlalchemy
+pydantic
+python-dotenv
+pytest                  
+pytest-asyncio          
+httpx                   
+requests
+python-multipart
